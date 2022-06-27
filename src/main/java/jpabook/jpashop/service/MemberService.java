@@ -1,0 +1,46 @@
+package jpabook.jpashop.service;
+
+import jpabook.jpashop.domain.Member;
+import jpabook.jpashop.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+
+import java.util.List;
+
+@Service
+@Transactional(readOnly = true)
+public class MemberService {
+    private MemberRepository memberRepository;
+
+    @Autowired
+    public void setMemberRepository(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
+    // TODO : 회원 가입
+    @Transactional
+    public Long Join(Member member) {
+        validateDuplicateMember(member); // 중북 회원 검증
+        memberRepository.save(member);
+        return member.getId();
+    }
+
+    private void validateDuplicateMember(Member member) {
+        // EXCEPTION
+        List<Member> findMembers = memberRepository.findByName(member.getName());
+        // name 을 unique 로 설정 해주어서 동시에 가입 할때 막기
+        if (!findMembers.isEmpty()) {
+            throw new IllegalStateException("이미 존재하는 회원입니다.");
+        }
+    }
+    // TODO : 회원 전체 조회
+    public List<Member> findMembers(){
+        return memberRepository.findAll();
+    }
+    
+    public Member findOne(Long memberId){
+        return memberRepository.findOne(memberId);
+    }
+}
