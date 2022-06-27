@@ -19,7 +19,7 @@ public class MemberService {
 
     // TODO : 회원 가입
     @Transactional
-    public Long Join(Member member) {
+    public  Long join(Member member) {
         validateDuplicateMember(member); // 중북 회원 검증
         memberRepository.save(member);
         return member.getId();
